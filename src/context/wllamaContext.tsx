@@ -1,6 +1,9 @@
 import { Model, Wllama } from "@wllama/wllama";
 import React, { createContext, useEffect, useRef, useState } from "react";
 
+const RECOMMENDED_MODELS =
+  '{"modelManager":{"cacheManager":{},"params":{"cacheManager":{},"logger":{}},"logger":{}},"url":"https://huggingface.co/LiquidAI/LFM2-350M-GGUF/resolve/main/LFM2-350M-Q4_K_M.gguf","size":229309376,"files":[{"name":"4d44b45ab5ccd10c16ccaa96722a1fdd9c9a932d_LFM2-350M-Q4_K_M.gguf","size":229309376,"metadata":{"originalURL":"https://huggingface.co/LiquidAI/LFM2-350M-GGUF/resolve/main/LFM2-350M-Q4_K_M.gguf","originalSize":229309376,"etag":"8011c02a2fed5b5898f8d8ff915045434b3d39f165e7729ca7dbd82e700f7fb1"}}]}';
+
 const CONFIG_PATHS = {
   "single-thread/wllama.wasm":
     "https://cdn.jsdelivr.net/npm/@wllama/wllama@2.3.6/src/single-thread/wllama.wasm",
@@ -79,7 +82,8 @@ const WllamaProvider = ({ children }: { children: React.ReactNode }) => {
         model.url = url;
       }
       setCurrentModel(model);
-      if (!models.includes(model)) {
+
+      if (models.findIndex((m) => (m.url = url)) < 0) {
         setModels([model, ...models]);
       }
     } catch (e) {
@@ -135,6 +139,7 @@ You are a Markdown assistant.
     wllama.current.modelManager
       .getModels({ includeInvalid: false })
       .then((models) => {
+        models.push(JSON.parse(RECOMMENDED_MODELS));
         const map = new Map<string, boolean>();
         const models_set = [];
 

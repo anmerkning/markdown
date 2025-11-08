@@ -18,8 +18,8 @@ function App() {
               <MarkdownViewer />
             </div>
           </>
-          <ProgressDialog />
           <ModelSelectDialog />
+          <ProgressDialog />
         </div>
       </div>
     </WllamaProvider>

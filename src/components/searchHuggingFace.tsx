@@ -113,6 +113,7 @@ const SearchHuggingFace = () => {
                       .filter((f) => f.rfilename.includes(".gguf"))
                       .map((file, index) => (
                         <Item
+                          key={`${repo.id}/${file.rfilename}`}
                           variant={`${index % 2 == 0 ? "muted" : "default"}`}
                         >
                           <ItemContent>
