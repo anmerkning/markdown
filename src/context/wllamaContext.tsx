@@ -79,7 +79,7 @@ const WllamaProvider = ({ children }: { children: React.ReactNode }) => {
         model.url = url;
       }
       setCurrentModel(model);
-      if (models.includes(model)) {
+      if (!models.includes(model)) {
         setModels([model, ...models]);
       }
     } catch (e) {
