@@ -2,6 +2,7 @@ import type React from "react";
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupText,
   InputGroupTextarea,
 } from "./ui/input-group";
@@ -106,9 +107,15 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
             {currentModel?.files[0].name.substring(41)}
           </Button>
           <Separator orientation="vertical" />
-          <InputGroupText className="ml-auto">
+          <InputGroupButton
+            onClick={() => {
+              setPromptOpen(!isPromptOpen);
+            }}
+            variant="ghost"
+            className="ml-auto"
+          >
             <b>Ctrl + Space</b> to open promt
-          </InputGroupText>
+          </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>
 
