@@ -138,6 +138,28 @@ You are a Markdown assistant.
     setGeneratingResponse(false);
   };
 
+  const initModels = async () => {
+    await wllama
+      .current!.modelManager.getModels({ includeInvalid: false })
+      .then((models) => {
+        models.push(JSON.parse(RECOMMENDED_MODELS));
+        const map = new Map<string, boolean>();
+        const models_set = [];
+
+        for (const model of models) {
+          if (model.url == "") {
+            model.remove();
+            continue;
+          }
+          if (!map.has(model.url)) {
+            map.set(model.url, true);
+            models_set.push(model);
+          }
+        }
+        setModels(models_set);
+      });
+  };
+
   useEffect(() => {
     const ls_markdown = localStorage.getItem("markdown");
     if (ls_markdown != null) {
@@ -150,28 +172,10 @@ You are a Markdown assistant.
       const ls_currentModel = localStorage.getItem("currentModel");
       if (ls_currentModel != null) {
         const m: Model = JSON.parse(ls_currentModel);
-        selectModel(m.url).then(() => {
-          wllama
-            .current!.modelManager.getModels({ includeInvalid: false })
-            .then((models) => {
-              models.push(JSON.parse(RECOMMENDED_MODELS));
-              const map = new Map<string, boolean>();
-              const models_set = [];
-
-              for (const model of models) {
-                if (model.url == "") {
-                  model.remove();
-                  continue;
-                }
-                if (!map.has(model.url)) {
-                  map.set(model.url, true);
-                  models_set.push(model);
-                }
-              }
-              setModels(models_set);
-            });
-        });
+        selectModel(m.url).then(() => initModels());
       }
+    } else {
+      initModels();
     }
   }, []);
 
