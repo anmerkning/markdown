@@ -3,6 +3,8 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AppContext } from "../context/appContext";
 import { EyeIcon } from "lucide-react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const MarkdownViewer = () => {
   const { markdown } = use(AppContext);
@@ -15,7 +17,29 @@ const MarkdownViewer = () => {
         </span>
       </div>
       <div className="markdown-body break-all p-6">
-        <Markdown remarkPlugins={[remarkGfm]}>{markdown}</Markdown>
+        <Markdown
+          components={{
+            code(props) {
+              const { children, className, node, ...rest } = props;
+              const match = /language-(\w+)/.exec(className || "");
+              return match ? (
+                <SyntaxHighlighter
+                  PreTag="div"
+                  children={String(children).replace(/\n$/, "")}
+                  language={match[1]}
+                  style={oneLight}
+                />
+              ) : (
+                <code {...rest} className={className}>
+                  {children}
+                </code>
+              );
+            },
+          }}
+          remarkPlugins={[remarkGfm]}
+        >
+          {markdown}
+        </Markdown>
       </div>
     </div>
   );
