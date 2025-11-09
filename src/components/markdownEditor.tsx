@@ -122,7 +122,7 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
             variant="ghost"
             className="ml-auto"
           >
-            <b>Ctrl + Space</b> to open promt
+            Open Promt (<b className="hidden md:inline">Ctrl + Space</b>)
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>

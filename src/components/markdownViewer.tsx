@@ -9,14 +9,14 @@ import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 const MarkdownViewer = () => {
   const { markdown } = use(AppContext);
   return (
-    <div>
-      <div className="text-muted-foreground flex h-auto items-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50 order-first w-full justify-start px-3 pt-3 [.border-b]:pb-3 group-has-[>input]/input-group:pt-2.5 border-b">
+    <div className="h-full">
+      <div className="sticky bg-background top-0 left-0 text-muted-foreground flex h-auto items-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50 order-first w-full justify-start px-3 pt-3 [.border-b]:pb-3 group-has-[>input]/input-group:pt-2.5 border-b">
         <span className="text-muted-foreground flex items-center gap-2 text-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4">
           <EyeIcon />
           Preview
         </span>
       </div>
-      <div className="markdown-body break-all p-6">
+      <div className="markdown-body h-full break-all p-6 pt-16 overflow-y-scroll">
         <Markdown
           components={{
             code(props) {
