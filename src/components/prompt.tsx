@@ -6,7 +6,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "./ui/input-group";
-import { WllamaContext } from "../context/wllamaContext";
+import { AppContext } from "../context/appContext";
 
 interface PromptProps {
   isPromptOpen: boolean;
@@ -16,7 +16,7 @@ interface PromptProps {
 
 const Prompt: React.FC<PromptProps> = (props) => {
   const { isPromptOpen, close, caretPos } = props;
-  const { prompt } = use(WllamaContext);
+  const { prompt } = use(AppContext);
   const [promptCommand, setPromptCommand] = useState("");
   const aiTextArea = useRef<HTMLTextAreaElement>(null);
 

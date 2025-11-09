@@ -11,7 +11,7 @@ import { Separator } from "./ui/separator";
 import { Spinner } from "./ui/spinner";
 import { Button } from "./ui/button";
 import { Check, CircleX } from "lucide-react";
-import { WllamaContext } from "../context/wllamaContext";
+import { AppContext } from "../context/appContext";
 import Prompt from "./prompt";
 
 export interface Caret {
@@ -30,7 +30,8 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
     setSelectionStart,
     setSelectionEnd,
     setSelectOpen,
-  } = use(WllamaContext);
+  } = use(AppContext);
+
   const [isPromptOpen, setPromptOpen] = useState(false);
   const [caretPos, setCaretPos] = useState<Caret>({
     top: 0,

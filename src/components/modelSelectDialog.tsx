@@ -6,8 +6,8 @@ import {
   DialogFooter,
   DialogHeader,
 } from "./ui/dialog";
-import { use } from "react";
-import { WllamaContext } from "../context/wllamaContext";
+import { use, useEffect, useState } from "react";
+import { AppContext } from "../context/appContext";
 import {
   Item,
   ItemActions,
@@ -18,10 +18,11 @@ import {
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import SearchHuggingFace from "./searchHuggingFace";
+import { Separator } from "./ui/separator";
 
 const ModelSelectDialog = () => {
   const { models, selectOpen, setSelectOpen, selectModel, currentModel } =
-    use(WllamaContext);
+    use(AppContext);
 
   return (
     <Dialog
@@ -34,6 +35,8 @@ const ModelSelectDialog = () => {
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <SearchHuggingFace />
+        <Separator orientation="horizontal" />
+
         <div className="max-h-112 overflow-y-scroll">
           {models.map((m) => (
             <Item

@@ -8,13 +8,13 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Progress } from "./ui/progress";
-import { WllamaContext } from "../context/wllamaContext";
+import { AppContext } from "../context/appContext";
 import { Button } from "./ui/button";
 
 const ProgressDialog = () => {
-  const { progress, abort } = use(WllamaContext);
+  const { loadingModel, progress, abort } = use(AppContext);
   return (
-    <Dialog open={progress < 100}>
+    <Dialog open={loadingModel}>
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Downloading Model</DialogTitle>

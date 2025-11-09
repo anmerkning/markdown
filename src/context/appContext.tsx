@@ -1,9 +1,14 @@
-import { Model, Wllama } from "@wllama/wllama";
+import { LoggerWithoutDebug, Model, Wllama } from "@wllama/wllama";
 import React, { createContext, useEffect, useRef, useState } from "react";
 
+// JSON Dump of the recommended model.
+// Get parsed and added to the models list to ensure
+// that at least one model is viewed to the user on
+// the first run.
 const RECOMMENDED_MODELS =
   '{"modelManager":{"cacheManager":{},"params":{"cacheManager":{},"logger":{}},"logger":{}},"url":"https://huggingface.co/LiquidAI/LFM2-350M-GGUF/resolve/main/LFM2-350M-Q4_K_M.gguf","size":229309376,"files":[{"name":"4d44b45ab5ccd10c16ccaa96722a1fdd9c9a932d_LFM2-350M-Q4_K_M.gguf","size":229309376,"metadata":{"originalURL":"https://huggingface.co/LiquidAI/LFM2-350M-GGUF/resolve/main/LFM2-350M-Q4_K_M.gguf","originalSize":229309376,"etag":"8011c02a2fed5b5898f8d8ff915045434b3d39f165e7729ca7dbd82e700f7fb1"}}]}';
 
+// Wasm files
 const CONFIG_PATHS = {
   "single-thread/wllama.wasm":
     "https://cdn.jsdelivr.net/npm/@wllama/wllama@2.3.6/src/single-thread/wllama.wasm",
@@ -11,9 +16,10 @@ const CONFIG_PATHS = {
     "https://cdn.jsdelivr.net/npm/@wllama/wllama@2.3.6/src/multi-thread/wllama.wasm",
 };
 
-interface WllamaContextProps {
+interface AppContextProps {
   markdown: string;
   progress: number;
+  loadingModel: boolean;
   generatingResponse: boolean;
   models: Model[];
   currentModel: Model | null;
@@ -30,6 +36,7 @@ interface WllamaContextProps {
 const DEFAULT_CONTEXT_VALUES = {
   markdown: "",
   progress: 100,
+  loadingModel: false,
   generatingResponse: false,
   models: [],
   currentModel: null,
@@ -43,15 +50,16 @@ const DEFAULT_CONTEXT_VALUES = {
   prompt: async () => {},
 };
 
-const WllamaContext = createContext<WllamaContextProps>(DEFAULT_CONTEXT_VALUES);
+const AppContext = createContext<AppContextProps>(DEFAULT_CONTEXT_VALUES);
 
-const WllamaProvider = ({ children }: { children: React.ReactNode }) => {
-  const wllama = useRef(new Wllama(CONFIG_PATHS));
+const AppProvider = ({ children }: { children: React.ReactNode }) => {
+  const wllama = useRef<Wllama | null>(null);
   const abortController = useRef(new AbortController());
 
-  const [markdown, setMarkdown] = useState("");
+  const [markdown, setMarkdown] = useState(``);
   const [generatingResponse, setGeneratingResponse] = useState(false);
   const [progress, setProgress] = useState(100);
+  const [loadingModel, setLoadingModel] = useState(false);
   const [models, setModels] = useState<Model[]>([]);
   const [currentModel, setCurrentModel] = useState<Model | null>(null);
   const [selectionStart, setSelectionStart] = useState(0);
@@ -71,26 +79,21 @@ const WllamaProvider = ({ children }: { children: React.ReactNode }) => {
   const selectModel = async (url: string) => {
     setProgress(0);
     setCurrentModel(null);
-    await wllama.current.exit();
-    try {
-      const model = await wllama.current.modelManager.getModelOrDownload(url, {
-        progressCallback,
-        signal: abortController.current.signal,
-      });
-      await wllama.current.loadModel(model);
-      if (model.url == "") {
-        model.url = url;
-      }
-      setCurrentModel(model);
-
-      if (models.findIndex((m) => (m.url = url)) < 0) {
-        setModels([model, ...models]);
-      }
-    } catch (e) {
-      if (e == "TypeError: Error in input stream") {
-        throw new Error("Failed to setup model! Refresh and try again.");
-      }
+    setLoadingModel(true);
+    await wllama.current!.exit();
+    const model = await wllama.current!.modelManager.getModelOrDownload(url, {
+      progressCallback,
+      signal: abortController.current.signal,
+    });
+    await wllama.current!.loadModel(model);
+    if (model.url == "") {
+      model.url = url;
     }
+    if (models.findIndex((m) => m.url == url) < 0) {
+      setModels([model, ...models]);
+    }
+    setCurrentModel(model);
+    setLoadingModel(false);
   };
 
   const abort = () => {
@@ -101,7 +104,7 @@ const WllamaProvider = ({ children }: { children: React.ReactNode }) => {
 
   const prompt = async (promptCommand: string) => {
     setGeneratingResponse(true);
-    const iterable = await wllama.current.createChatCompletion(
+    const iterable = await wllama.current!.createChatCompletion(
       [
         {
           role: "system",
@@ -136,33 +139,61 @@ You are a Markdown assistant.
   };
 
   useEffect(() => {
-    wllama.current.modelManager
-      .getModels({ includeInvalid: false })
-      .then((models) => {
-        models.push(JSON.parse(RECOMMENDED_MODELS));
-        const map = new Map<string, boolean>();
-        const models_set = [];
+    const ls_markdown = localStorage.getItem("markdown");
+    if (ls_markdown != null) {
+      setMarkdown(ls_markdown);
+    }
 
-        for (const model of models) {
-          if (model.url == "") {
-            model.remove();
-            continue;
-          }
-          if (!map.has(model.url)) {
-            map.set(model.url, true);
-            models_set.push(model);
-          }
-        }
-        setModels(models_set);
-      });
+    if (wllama.current == null) {
+      wllama.current = new Wllama(CONFIG_PATHS, { logger: LoggerWithoutDebug });
+
+      const ls_currentModel = localStorage.getItem("currentModel");
+      if (ls_currentModel != null) {
+        const m: Model = JSON.parse(ls_currentModel);
+        selectModel(m.url).then(() => {
+          wllama
+            .current!.modelManager.getModels({ includeInvalid: false })
+            .then((models) => {
+              models.push(JSON.parse(RECOMMENDED_MODELS));
+              const map = new Map<string, boolean>();
+              const models_set = [];
+
+              for (const model of models) {
+                if (model.url == "") {
+                  model.remove();
+                  continue;
+                }
+                if (!map.has(model.url)) {
+                  map.set(model.url, true);
+                  models_set.push(model);
+                }
+              }
+              setModels(models_set);
+            });
+        });
+      }
+    }
   }, []);
 
+  useEffect(() => {
+    if (markdown.length > 0) {
+      localStorage.setItem("markdown", markdown);
+    }
+  }, [markdown]);
+
+  useEffect(() => {
+    if (currentModel != null) {
+      localStorage.setItem("currentModel", JSON.stringify(currentModel));
+    }
+  }, [currentModel]);
+
   return (
-    <WllamaContext
+    <AppContext
       value={{
         markdown,
         setMarkdown,
         progress,
+        loadingModel,
         models,
         currentModel,
         generatingResponse,
@@ -176,8 +207,8 @@ You are a Markdown assistant.
       }}
     >
       {children}
-    </WllamaContext>
+    </AppContext>
   );
 };
 
-export { WllamaContext, WllamaProvider };
+export { AppContext, AppProvider };
