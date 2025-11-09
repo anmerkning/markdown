@@ -77,42 +77,44 @@ const ModelsList: React.FC<ModelsListProps> = (props) => {
   const { title, currentModel, models, itemAction } = props;
 
   return (
-    <div className="max-h-60 overflow-y-scroll">
+    <div>
       <Label className="pb-4 text-sm">{title}</Label>
-      {models.length == 0 ? (
-        <Empty className="border border-solid border-neutral-200">
-          <EmptyHeader>
-            <EmptyMedia>
-              <CircleOffIcon />
-            </EmptyMedia>
-            <EmptyTitle>Empty</EmptyTitle>
-          </EmptyHeader>
-        </Empty>
-      ) : (
-        <>
-          {models.map((m) => (
-            <Item
-              variant={`${currentModel?.url == m.url ? "muted" : "outline"}`}
-              key={m.url}
-              className={`hover:bg-slate-200`}
-            >
-              <ItemContent>
-                <ItemTitle>{m.files[0].name.substring(41)}</ItemTitle>
-                <ItemDescription>{m.url}</ItemDescription>
-              </ItemContent>
-              <ItemActions>
-                {currentModel?.url != m.url ? (
-                  <Button size="sm" onClick={() => itemAction(m)}>
-                    Select
-                  </Button>
-                ) : (
-                  <Label className="text-blue-900">Selected</Label>
-                )}
-              </ItemActions>
-            </Item>
-          ))}
-        </>
-      )}
+      <div className="border border-neutral-200 shadow-inner rounded-lg max-h-60 overflow-y-scroll">
+        {models.length == 0 ? (
+          <Empty className="border border-solid border-neutral-200">
+            <EmptyHeader>
+              <EmptyMedia>
+                <CircleOffIcon />
+              </EmptyMedia>
+              <EmptyTitle>Empty</EmptyTitle>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          <>
+            {models.map((m) => (
+              <Item
+                variant={`${currentModel?.url == m.url ? "muted" : "outline"}`}
+                key={m.url}
+                className={`hover:bg-slate-200`}
+              >
+                <ItemContent>
+                  <ItemTitle>{m.files[0].name.substring(41)}</ItemTitle>
+                  <ItemDescription>{m.url}</ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  {currentModel?.url != m.url ? (
+                    <Button size="sm" onClick={() => itemAction(m)}>
+                      Select
+                    </Button>
+                  ) : (
+                    <Label className="text-blue-900">Selected</Label>
+                  )}
+                </ItemActions>
+              </Item>
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 };

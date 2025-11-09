@@ -13,7 +13,7 @@ function App() {
           <div className="relative basis-1/2 h-full flex">
             <MarkdownEditor />
           </div>
-          <div className="basis-1/2 h-full markdown-body p-6 break-all rounded-lg overflow-y-scroll border ">
+          <div className="basis-1/2 h-full rounded-lg overflow-y-scroll border ">
             <MarkdownViewer />
           </div>
           <ModelSelectDialog />

@@ -11,9 +11,11 @@ import getCaretCoordinates from "textarea-caret";
 import { Separator } from "./ui/separator";
 import { Spinner } from "./ui/spinner";
 import { Button } from "./ui/button";
-import { Check, CircleX } from "lucide-react";
+import { Check, CircleX, FilePenLineIcon } from "lucide-react";
 import { AppContext } from "../context/appContext";
 import Prompt from "./prompt";
+
+const LINE_OFFSET = 42;
 
 export interface Caret {
   top: number;
@@ -50,7 +52,7 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
       setCaretPos({
         height: caretCoords.height,
         left: caretCoords.left,
-        top: caretCoords.top - (textarea.current.scrollTop ?? 0),
+        top: caretCoords.top - (textarea.current.scrollTop ?? 0) + LINE_OFFSET,
       });
       setSelectionStart(textarea.current.selectionStart);
       setSelectionEnd(textarea.current.selectionEnd);
@@ -60,6 +62,12 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
   return (
     <>
       <InputGroup>
+        <InputGroupAddon align="block-start" className="border-b">
+          <InputGroupText>
+            <FilePenLineIcon />
+            Editor
+          </InputGroupText>
+        </InputGroupAddon>
         <InputGroupTextarea
           ref={textarea}
           value={markdown}
@@ -78,7 +86,7 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
             updateCaretPos();
           }}
         />
-        <InputGroupAddon align="block-end">
+        <InputGroupAddon align="block-end" className="border-t">
           <InputGroupText className="">
             {generatingResponse ? (
               <div className="flex items-center gap-2">
@@ -86,7 +94,7 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
                   <Spinner /> <span className="hidden md:inline">Working</span>
                 </div>
                 <Button variant="secondary" onClick={() => abort()}>
-                  <CircleX className="text-destructive" />
+                  <CircleX />
                   <span className="hidden md:inline">Cancel</span>
                 </Button>
               </div>
@@ -99,13 +107,13 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
           </InputGroupText>
           <Separator orientation="vertical" />
           <span className="hidden md:inline">Model:</span>
-          <Button
+          <InputGroupButton
             className="max-w-24 md:max-w-full overflow-hidden"
             variant="ghost"
             onClick={() => setSelectOpen(true)}
           >
             {currentModel?.files[0].name.substring(41)}
-          </Button>
+          </InputGroupButton>
           <Separator orientation="vertical" />
           <InputGroupButton
             onClick={() => {

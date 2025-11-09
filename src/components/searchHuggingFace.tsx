@@ -28,13 +28,12 @@ import {
 } from "./ui/empty";
 
 const SearchHuggingFace = () => {
-  const { selectModel, setSelectOpen } = use(AppContext);
+  const { setSelectOpen, selectModel } = use(AppContext);
   const { repos, isLoading, update } = useHuggingFace();
   const { value, setValue } = useDebounce({
     callback: async (value) => await update(value),
     delay: 500,
   });
-
   return (
     <div>
       <Label className="pb-4 text-sm">Search</Label>
@@ -57,8 +56,8 @@ const SearchHuggingFace = () => {
           </InputGroupAddon>
         )}
       </InputGroup>
-      <div className="border border-neutral-200 rounded-lg max-h-60 overflow-y-scroll mt-4 inset-shadow-2xs">
-        {repos.length == 0 && (
+      <div className="shadow-inner border rounded-lg max-h-50 overflow-y-scroll mt-4 inset-shadow-2xs">
+        {repos.length == 0 && value.length > 0 && (
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -77,7 +76,7 @@ const SearchHuggingFace = () => {
             {repos.map((repo) => (
               <AccordionItem
                 key={repo._id}
-                className="border border-nautral-200"
+                className="border border-nautral-200 w-full break-all"
                 value={repo.id}
               >
                 <AccordionTrigger className="p-4 py-6">

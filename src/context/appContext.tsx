@@ -55,7 +55,6 @@ const AppContext = createContext<AppContextProps>(DEFAULT_CONTEXT_VALUES);
 const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const wllama = useRef<Wllama | null>(null);
   const abortController = useRef(new AbortController());
-
   const [markdown, setMarkdown] = useState(``);
   const [generatingResponse, setGeneratingResponse] = useState(false);
   const [progress, setProgress] = useState(100);
