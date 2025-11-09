@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from "./ui/dialog";
-import { use, useEffect, useState } from "react";
+import { use } from "react";
 import { AppContext } from "../context/appContext";
 import {
   Item,
