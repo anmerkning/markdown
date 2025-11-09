@@ -82,23 +82,27 @@ const MarkdownEditor: React.FC<{}> = ({}) => {
             {generatingResponse ? (
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
-                  <Spinner /> Working
+                  <Spinner /> <span className="hidden md:inline">Working</span>
                 </div>
                 <Button variant="secondary" onClick={() => abort()}>
                   <CircleX className="text-destructive" />
-                  Cancel
+                  <span className="hidden md:inline">Cancel</span>
                 </Button>
               </div>
             ) : (
               <>
                 <Check className="text-green-400" />
-                Ready
+                <span className="hidden md:inline">Ready</span>
               </>
             )}
           </InputGroupText>
           <Separator orientation="vertical" />
-          Model:
-          <Button variant="ghost" onClick={() => setSelectOpen(true)}>
+          <span className="hidden md:inline">Model:</span>
+          <Button
+            className="max-w-24 md:max-w-full overflow-hidden"
+            variant="ghost"
+            onClick={() => setSelectOpen(true)}
+          >
             {currentModel?.files[0].name.substring(41)}
           </Button>
           <Separator orientation="vertical" />

@@ -32,7 +32,10 @@ const ModelSelectDialog = () => {
       open={selectOpen || currentModel == null}
       onOpenChange={() => setSelectOpen(false)}
     >
-      <DialogContent showCloseButton={currentModel != null}>
+      <DialogContent
+        className="max-h-9/10 overflow-y-scroll"
+        showCloseButton={currentModel != null}
+      >
         <DialogHeader>
           <DialogTitle>Select Model</DialogTitle>
           <DialogDescription></DialogDescription>
