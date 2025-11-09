@@ -6,8 +6,8 @@ import {
   DialogFooter,
   DialogHeader,
 } from "./ui/dialog";
-import { use } from "react";
-import { AppContext } from "../context/appContext";
+import { use, useRef } from "react";
+import { AppContext, RECOMMENDED_MODELS } from "../context/appContext";
 import {
   Item,
   ItemActions,
@@ -18,11 +18,14 @@ import {
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import SearchHuggingFace from "./searchHuggingFace";
-import { Separator } from "./ui/separator";
+import type { Model } from "@wllama/wllama";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "./ui/empty";
+import { CircleOffIcon } from "lucide-react";
 
 const ModelSelectDialog = () => {
   const { models, selectOpen, setSelectOpen, selectModel, currentModel } =
     use(AppContext);
+  const recommended = useRef<Model[]>([JSON.parse(RECOMMENDED_MODELS)]);
 
   return (
     <Dialog
@@ -35,9 +38,55 @@ const ModelSelectDialog = () => {
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <SearchHuggingFace />
-        <Separator orientation="horizontal" />
+        <ModelsList
+          title="Downloaded"
+          currentModel={currentModel}
+          models={models}
+          itemAction={(m) => {
+            selectModel(m.url);
+            setSelectOpen(false);
+          }}
+        />
 
-        <div className="max-h-112 overflow-y-scroll">
+        <ModelsList
+          title="Recommended"
+          currentModel={currentModel}
+          models={recommended.current}
+          itemAction={(m) => {
+            selectModel(m.url);
+            setSelectOpen(false);
+          }}
+        />
+
+        <DialogFooter className="items-center"></DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+interface ModelsListProps {
+  title: string;
+  currentModel: Model | null;
+  models: Model[];
+  itemAction: (m: Model) => void;
+}
+const ModelsList: React.FC<ModelsListProps> = (props) => {
+  const { title, currentModel, models, itemAction } = props;
+
+  return (
+    <div className="max-h-60 overflow-y-scroll">
+      <Label className="pb-4 text-sm">{title}</Label>
+      {models.length == 0 ? (
+        <Empty className="border border-solid border-neutral-200">
+          <EmptyHeader>
+            <EmptyMedia>
+              <CircleOffIcon />
+            </EmptyMedia>
+            <EmptyTitle>Empty</EmptyTitle>
+          </EmptyHeader>
+        </Empty>
+      ) : (
+        <>
           {models.map((m) => (
             <Item
               variant={`${currentModel?.url == m.url ? "muted" : "outline"}`}
@@ -50,13 +99,7 @@ const ModelSelectDialog = () => {
               </ItemContent>
               <ItemActions>
                 {currentModel?.url != m.url ? (
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      selectModel(m.url);
-                      setSelectOpen(false);
-                    }}
-                  >
+                  <Button size="sm" onClick={() => itemAction(m)}>
                     Select
                   </Button>
                 ) : (
@@ -65,11 +108,10 @@ const ModelSelectDialog = () => {
               </ItemActions>
             </Item>
           ))}
-        </div>
-
-        <DialogFooter className="items-center"></DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </>
+      )}
+    </div>
   );
 };
+
 export default ModelSelectDialog;

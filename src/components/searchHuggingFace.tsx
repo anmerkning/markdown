@@ -37,6 +37,7 @@ const SearchHuggingFace = () => {
 
   return (
     <div>
+      <Label className="pb-4 text-sm">Search</Label>
       <InputGroup>
         <InputGroupInput
           id="searchHuggingface"
