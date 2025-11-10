@@ -1,7 +1,6 @@
 # Markdown Editor with an in browser LLM assistant
-
-A lightweight, in-browser **Markdown editor** featuring an integrated **AI assistant** powered by [wllama](https://github.com/ngxson/wllama).
-Edit, preview, and enhance your markdown documents with intelligent assistance, all without leaving your browser.
+'*
+A lightweight, in-browser **Markdown editor** featuring an integrated **AI assistant** powered by **wllama**.
 
 ## [Demo](https://anmerkning.github.io/markdown)
 
