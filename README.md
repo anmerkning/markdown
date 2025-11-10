@@ -1,75 +1,72 @@
-# React + TypeScript + Vite
+# Markdown Editor with an in browser LLM assistant
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight, in-browser **Markdown editor** featuring an integrated **AI assistant** powered by [wllama](https://github.com/ngxson/wllama).
+Edit, preview, and enhance your markdown documents with intelligent assistance, all without leaving your browser.
 
-Currently, two official plugins are available:
+## [Demo](https://anmerkning.github.io/markdown)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+https://github.com/user-attachments/assets/3925ca13-6d8e-4ff7-aa08-d55f8e07ac93
 
-## React Compiler
+## Features
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Live Markdown Editing** – Write and format markdown in real time.
+-  **Preview Mode** – Instantly preview rendered markdown alongside your editor.
+-  **AI Assistant (wllama)** – Prompt the built-in AI assistant for writing help, content ideas, or markdown tips.
+-  **Session Persistence** – Automatically save your content and selected model to **local storage**, so your work stays safe between sessions.
+-  **Model Lookup** – Search and download models directly from **Hugging Face** within the tool.
+-  **Model Switching** – Easily switch between available models for different tasks or performance levels.
 
-Note: This will impact Vite dev & build performances.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* **Frontend:** React / Vite / TypeScript
+* **In browser LLM:** wllama 
+* **Styling:** Shadcdn components and Tailwind 
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## How to run locally
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Clone the repository
+git clone https://github.com/anmerkning/markdown
+
+# Navigate into the project
+cd markdown
+
+# Install dependencies
+npm install
+
+# Run locally
+npm run dev
 ```
+Then open your browser and navigate to **[http://localhost:5173/markdown](http://localhost:3000)** (or the port shown in your terminal).
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## How to build
 ```
+# Clone the repository
+git clone https://github.com/anmerkning/markdown
+
+# Navigate into the project
+cd markdown
+
+# Install dependencies
+npm install
+
+# Build
+npm run build
+```
+Built output will be in `/dist`
+
+## TODO
+* [ ] Persist editors selection highlight when user open a prompt and send selection as part of the prompt message.
+* [ ] Add `Clear Cache` option.
+* [ ] Add ability to upload local models.
+* [ ] Limit huggingface model search results to models that are less than 2 GB. (requires pre fetching file metadata)
+* [ ] Polish huggingface search result view. Add size, popularity, downloads and other information to the huggingface search results.
+* [ ] Export markdown as `.md` 
+* [ ] Add model adjustment options (temperature, max tokens, etc.)
+
+---
+
+Made in Norway 🇳🇴
