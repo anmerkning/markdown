@@ -1,5 +1,5 @@
 # Markdown Editor with an in browser LLM assistant
-'*
+
 A lightweight, in-browser **Markdown editor** featuring an integrated **AI assistant** powered by **wllama**.
 
 ## [Demo](https://anmerkning.github.io/markdown)
